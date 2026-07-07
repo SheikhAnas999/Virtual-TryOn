@@ -1,0 +1,363 @@
+{
+  "76": {
+    "inputs": {
+      "image": "18.webp"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "94": {
+    "inputs": {
+      "filename_prefix": "Flux2-Klein",
+      "images": [
+        "103",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "99": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "100": {
+    "inputs": {
+      "steps": 4,
+      "width": [
+        "115",
+        0
+      ],
+      "height": [
+        "115",
+        1
+      ]
+    },
+    "class_type": "Flux2Scheduler",
+    "_meta": {
+      "title": "Flux2Scheduler"
+    }
+  },
+  "101": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "105",
+        0
+      ],
+      "positive": [
+        "112:119",
+        0
+      ],
+      "negative": [
+        "112:117",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFG Guider"
+    }
+  },
+  "102": {
+    "inputs": {
+      "noise": [
+        "104",
+        0
+      ],
+      "guider": [
+        "101",
+        0
+      ],
+      "sampler": [
+        "99",
+        0
+      ],
+      "sigmas": [
+        "100",
+        0
+      ],
+      "latent_image": [
+        "114",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "103": {
+    "inputs": {
+      "samples": [
+        "102",
+        0
+      ],
+      "vae": [
+        "108",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "104": {
+    "inputs": {
+      "noise_seed": 459481204021515
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "105": {
+    "inputs": {
+      "unet_name": "flux-2-klein-9b-fp8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "106": {
+    "inputs": {
+      "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+      "type": "flux2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "107": {
+    "inputs": {
+      "text": "replace the cloth in image 1 with shirt pants , glasses and pants in image 2.\n",
+      "clip": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "108": {
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "109": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "megapixels": 1,
+      "resolution_steps": 1,
+      "image": [
+        "76",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Scale Image to Total Pixels"
+    }
+  },
+  "110": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "megapixels": 1,
+      "resolution_steps": 1,
+      "image": [
+        "134",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Scale Image to Total Pixels"
+    }
+  },
+  "113": {
+    "inputs": {
+      "conditioning": [
+        "107",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "114": {
+    "inputs": {
+      "width": [
+        "115",
+        0
+      ],
+      "height": [
+        "115",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "Empty Flux 2 Latent"
+    }
+  },
+  "115": {
+    "inputs": {
+      "image": [
+        "109",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "126": {
+    "inputs": {
+      "images": [
+        "134",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "134": {
+    "inputs": {
+      "image_1": "MAS26BT174-NAVY-COTTON-TWILL-SHORTS-181623-_28.jpg",
+      "columns": 3,
+      "spacing": 10,
+      "background": "white",
+      "image_2": "16.png",
+      "image_3": "none",
+      "image_4": "12.webp",
+      "image_5": "13.jpg",
+      "image_6": "none"
+    },
+    "class_type": "ImageGridMergerFromFiles",
+    "_meta": {
+      "title": "Image Grid Merger (Upload)"
+    }
+  },
+  "111:116": {
+    "inputs": {
+      "conditioning": [
+        "113",
+        0
+      ],
+      "latent": [
+        "111:78",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "111:78": {
+    "inputs": {
+      "pixels": [
+        "109",
+        0
+      ],
+      "vae": [
+        "108",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "111:77": {
+    "inputs": {
+      "conditioning": [
+        "107",
+        0
+      ],
+      "latent": [
+        "111:78",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "112:117": {
+    "inputs": {
+      "conditioning": [
+        "111:116",
+        0
+      ],
+      "latent": [
+        "112:118",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "112:118": {
+    "inputs": {
+      "pixels": [
+        "110",
+        0
+      ],
+      "vae": [
+        "108",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "112:119": {
+    "inputs": {
+      "conditioning": [
+        "111:77",
+        0
+      ],
+      "latent": [
+        "112:118",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  }
+}
