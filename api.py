@@ -1,8 +1,9 @@
 import json
 import random
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Optional
+from typing import List
 
 import requests
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -46,39 +47,52 @@ def upload_all(files: List[UploadFile]) -> List[str]:
         return list(executor.map(lambda item: upload_image(*item), items))
 
 
+def build_prompt(labels: List[str]) -> str:
+    if len(labels) > 1:
+        joined = " , ".join(labels[:-1]) + " and " + labels[-1]
+    else:
+        joined = labels[0]
+    return f"Replace the cloth in image 1 with {joined} in image 2."
+
+
+# The Electron client builds each line as f"Image {i+2} ({label}): {promptDesc}"
+# and only sends this combined descriptionText, never the raw label by itself.
+LABEL_LINE_RE = re.compile(r"^Image\s+\d+\s+\((.*?)\)\s*:")
+
+
+def extract_labels(description_text: str) -> List[str]:
+    labels = []
+    for line in description_text.splitlines():
+        match = LABEL_LINE_RE.match(line.strip())
+        if match:
+            labels.append(match.group(1).strip())
+    return labels
+
+
 @app.post("/virtual-tryon-image")
 def virtual_tryon_image(
-    prompt: str = Form(...),
     human_image: UploadFile = File(...),
-    product_image_1: UploadFile = File(...),
-    product_image_2: Optional[UploadFile] = File(None),
-    product_image_3: Optional[UploadFile] = File(None),
-    product_image_4: Optional[UploadFile] = File(None),
-    product_image_5: Optional[UploadFile] = File(None),
-    product_image_6: Optional[UploadFile] = File(None),
+    descriptionText: str = Form(...),
+    clothes: List[UploadFile] = File(...),
 ):
-    product_images = [
-        f
-        for f in [
-            product_image_1,
-            product_image_2,
-            product_image_3,
-            product_image_4,
-            product_image_5,
-            product_image_6,
-        ]
-        if f is not None
-    ]
-    if len(product_images) > len(GRID_SLOTS):
+    if not clothes:
+        raise HTTPException(400, "At least one garment image (clothes) is required.")
+    if len(clothes) > len(GRID_SLOTS):
         raise HTTPException(
             400, f"Too many product images: max {len(GRID_SLOTS)} supported."
         )
 
+    labels = extract_labels(descriptionText)
+    if not labels:
+        raise HTTPException(400, "Could not find any garment labels in descriptionText.")
+
+    prompt = build_prompt(labels)
+    print(prompt)
     # -----------------------------
     # Upload Images (concurrently)
     # -----------------------------
 
-    all_names = upload_all([human_image] + product_images)
+    all_names = upload_all([human_image] + clothes)
     person_name = all_names[0]
     product_names = all_names[1:]
 
