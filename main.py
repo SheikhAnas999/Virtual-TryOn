@@ -4,7 +4,7 @@ import requests
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-BASE_URL = "https://jrh88py4eg2zzh-8188.proxy.runpod.net"
+BASE_URL = "https://hol0lfwc9llere-8188.proxy.runpod.net"
 
 # Reuse one HTTP connection (keep-alive) instead of opening a new
 # TCP+TLS connection for every upload/prompt/history/view call.
